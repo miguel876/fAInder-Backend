@@ -18,7 +18,7 @@ app.post('/analyze', async (req, res) => {
         'Authorization': `Bearer ${apiKey}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ inputs: text }),
+      body: JSON.stringify({ text }),
     });
 
     const data = await response.json();
