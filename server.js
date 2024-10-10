@@ -1,6 +1,11 @@
 import express, { json } from 'express';
+import cors from 'cors';
+import dotenv from 'dotenv';
 import fetch from 'node-fetch';
+
 const app = express();
+
+dotenv.config();
 
 // Middleware to parse JSON body
 app.use(json());
