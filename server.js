@@ -7,6 +7,8 @@ app.use(json());
 
 app.use(cors());
 
+console.log("test")
+
 // Route for AI text detection
 app.post('/analyze', async (req, res) => {
   const apiKey = process.env.HUGGING_FACE_API_KEY;
