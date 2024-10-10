@@ -5,11 +5,17 @@ const app = express();
 // Middleware to parse JSON body
 app.use(json());
 
+app.use(cors());
+
 // Route for AI text detection
 app.post('/analyze', async (req, res) => {
   const apiKey = process.env.HUGGING_FACE_API_KEY;
   const apiUrl = 'https://api-inference.huggingface.co/models/roberta-base-openai-detector';
   const text = req.body.text;
+
+  if (!text) {
+    return res.status(400).json({ error: 'Text is required' });
+  }
 
   try {
     const response = await fetch(apiUrl, {
