@@ -11,15 +11,17 @@ dotenv.config();
 app.use(json());
 app.use(cors());
 
+const errorMsg = "We are not being able to read the page. Please, try again!";
+
 // Route for AI text detection
 app.post('/analyze', async (req, res) => {
   const apiKey = process.env.HUGGING_FACE_API_KEY;
-  const apiUrl = 'https://api-inference.huggingface.co/models/roberta-base';
+  const apiUrl = 'https://api-inference.huggingface.co/models/roberta-base-openai-detector';
 
   const { text } = req.body;
 
   if (!text) {
-    return res.status(400).json({ error: 'Text is required' });
+    return res.status(400).json({ error: 'The page does not have any text to analyze!' });
   }
 
   try {
@@ -30,12 +32,12 @@ app.post('/analyze', async (req, res) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        inputs: text // Ensure the text is wrapped in `inputs` key as required by Hugging Face API
+        inputs: text
       }),
     });
 
     if (!response.ok) {
-      throw new Error(`Hugging Face API error: ${response.statusText}`);
+      throw new Error(errorMsg);
     }
 
     const data = await response.json();
@@ -43,11 +45,6 @@ app.post('/analyze', async (req, res) => {
 
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).json({ error: errorMsg });
   }
-});
-
-const port = process.env.PORT || 3333;
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
 });
