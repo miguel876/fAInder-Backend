@@ -9,14 +9,14 @@ dotenv.config();
 
 // Middleware to parse JSON body
 app.use(json());
-
 app.use(cors());
 
 // Route for AI text detection
 app.post('/analyze', async (req, res) => {
   const apiKey = process.env.HUGGING_FACE_API_KEY;
-  const apiUrl = 'https://api-inference.huggingface.co/models/roberta-base-openai-detector';
-  const text = req.body.text;
+  const apiUrl = 'https://api-inference.huggingface.co/models/roberta-base';
+
+  const { text } = req.body;
 
   if (!text) {
     return res.status(400).json({ error: 'Text is required' });
@@ -29,12 +29,20 @@ app.post('/analyze', async (req, res) => {
         'Authorization': `Bearer ${apiKey}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ text }),
+      body: JSON.stringify({
+        inputs: text // Ensure the text is wrapped in `inputs` key as required by Hugging Face API
+      }),
     });
+
+    if (!response.ok) {
+      throw new Error(`Hugging Face API error: ${response.statusText}`);
+    }
 
     const data = await response.json();
     res.status(200).json(data);
+
   } catch (error) {
+    console.error(error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
